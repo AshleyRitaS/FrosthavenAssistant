@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:format/format.dart';
 
 class Connection {
@@ -19,10 +20,10 @@ class Connection {
 
   Future<List<InternetAddress>> _resolveAddress(String address) async {
     List<InternetAddress> resolvedAddresses =
-          await InternetAddress.lookup(address);
-      if (resolvedAddresses.isEmpty) {
-        throw Exception("Unable to resolve host");
-      }
+        await InternetAddress.lookup(address);
+    if (resolvedAddresses.isEmpty) {
+      throw Exception("Unable to resolve host");
+    }
     return resolvedAddresses;
   }
 
@@ -54,7 +55,13 @@ class Connection {
   }
 
   Iterable<Socket> _find(Socket socket) {
-    return _sockets.where((x) => x.remoteAddress == socket.remoteAddress);
+    print(socket.remotePort);
+    return _sockets.where((x) {
+      debugPrint("x port: ${x.remotePort}");
+      debugPrint("socket port: ${socket.remotePort}");
+      return x.remoteAddress == socket.remoteAddress &&
+          x.remotePort == socket.remotePort;
+    });
   }
 
   void _destroy(Iterable<Socket> sockets) {
